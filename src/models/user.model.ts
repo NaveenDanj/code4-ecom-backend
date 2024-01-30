@@ -3,23 +3,19 @@ const Schema = mongoose.Schema;
 
 const UserSchema = new Schema(
   {
-    userId: {
-      type: Schema.Types.ObjectId,
-    },
-
     fullname: {
       type: String,
-      required: true,
+      required: false,
     },
 
     email: {
       type: String,
-      required: true,
+      required: false,
     },
 
     password: {
       type: String,
-      required: true,
+      required: false,
     },
 
   },

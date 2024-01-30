@@ -6,6 +6,7 @@ import passwordService from '../services/password.service';
 import jwtService from '../services/jwt.service';
 import AuthToken from '../models/authToken.model';
 import { IUser } from '../types/types';
+import userAuthRequired from '../middlewares/userAuthRequired.middleware'
 
 router.post('/register' , async (req:Request , res:Response) => {
     
@@ -36,6 +37,8 @@ router.post('/register' , async (req:Request , res:Response) => {
         }
     
         let userObject = await user.save();
+        // @ts-ignore
+        delete userObject.password
     
         return res.status(201).json({
           message: "New user created",
@@ -70,19 +73,18 @@ router.post('/login' , async (req:Request , res:Response) => {
                 message: "Email or password is incorrect!",
             });
         }
-
         const isMatch = await passwordService.comparePassword(data.password, user.password);
-
+        
         if (!isMatch) {
             return res.status(401).json({
                 message: "Email or password is incorrect!",
             });
         }
-
+        
         let _token = jwtService.generateToken(user.email);
 
         let accessToken = new AuthToken({
-            userId: user.userId,
+            userId: user._id,
             token: _token,
         });
 
@@ -101,3 +103,12 @@ router.post('/login' , async (req:Request , res:Response) => {
     }
 
 })
+
+router.get('/current-user' , userAuthRequired() , async (req:Request , res:Response) => {
+    return res.status(200).json({
+        // @ts-ignore
+        user: req.user,
+    });
+})
+
+export default router

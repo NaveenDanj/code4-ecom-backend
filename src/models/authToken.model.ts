@@ -3,10 +3,6 @@ const Schema = mongoose.Schema;
 
 const AuthTokenSchema = new Schema(
   {
-    id: {
-      type: Schema.Types.ObjectId,
-    },
-
     userId: {
       type: Schema.Types.ObjectId,
       required: true,
@@ -24,7 +20,6 @@ const AuthTokenSchema = new Schema(
       default: Date.now,
       expires: "30d",
     },
-    
   },
   { timestamps: true }
 );
