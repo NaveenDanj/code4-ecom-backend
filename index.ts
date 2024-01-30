@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import api from './src/routes/api'
+import mongoose from "mongoose";
 //For env File 
 dotenv.config();
 
@@ -15,7 +16,17 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
 
-app.use('/api' , api)
+mongoose
+  .connect(process.env.MONGODB_CONNECTION_URL+'')
+  .then(() => {
+    console.log("connected to mongodb");
+  })
+  .catch(() => {
+    console.log("error connecting to mongodb ");
+  });
+
+
+app.use('/api/v1' , api)
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Welcome to Express & TypeScript Server');
