@@ -104,6 +104,36 @@ router.post('/login' , async (req:Request , res:Response) => {
 
 })
 
+router.post('/logout' , userAuthRequired() , async (req:Request , res:Response) => {
+
+    try{
+
+        const token = req.headers["authorization"];
+    
+        if (!token) {
+            return res.status(401).send({ error: "Unauthenticated" });
+        }
+
+        let checkExists = await AuthToken.findOne({ token: token });
+
+        if (!checkExists) {
+            return res.status(401).send({ error: "Unauthenticated" });
+        }
+
+        await checkExists.deleteOne()
+
+        return res.status(200).json({
+            message : 'logged out successfully',
+        })
+
+    }catch(err){
+        return res.status(500).json({
+            message : 'Error while logging out',
+        })
+    }
+
+})
+
 router.get('/current-user' , userAuthRequired() , async (req:Request , res:Response) => {
     return res.status(200).json({
         // @ts-ignore
