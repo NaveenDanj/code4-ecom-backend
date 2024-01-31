@@ -207,6 +207,79 @@ router.delete('/delete-product' , async (req: Request, res: Response) => {
 
 })
 
+router.put('/edit-product-details' , async (req: Request, res: Response) => {
+
+  // @ts-ignore
+  const id:string = req.query.id
+
+  if(!id) return res.status(400).json({
+    message : 'Please provide product id'
+  })
+
+  const validator = Joi.object({
+    sku: Joi.string().required(),
+    productName: Joi.string().required(),
+    description: Joi.string().required(),
+    quantity: Joi.number().required(),
+  });
+
+
+  try{
+
+    let data;
+
+    try{
+      data = await validator.validateAsync(req.body, { abortEarly: false });
+    }catch(err){
+      return res.status(400).json({
+        message: 'Error while editing product',
+        error : err
+      });
+    }
+
+    if(data.quantity < 0){
+      return res.status(400).json({
+        message : 'Quantity cannot be less than 0'
+      })
+    }
+
+    const check_sku = await Product.findOne({ sku : data.sku })
+
+    if(check_sku && check_sku._id != id) return res.status(400).json({
+      message : 'This sku is assigned to another product!'
+    })
+
+    const product = await Product.findOne({_id : id});
+
+    if(!product) return res.status(404).json({
+      message : 'Product not found!'
+    })
+
+
+    await Product.updateOne(
+      { _id : id } ,
+      {$set : { 
+        sku : data.sku,
+        productName: data.productName,
+        description: data.description,
+        quantity: data.quantity
+      }}
+    )
+
+    return res.status(200).json({
+      message : 'product updated successfully!',
+      product : await Product.findById(id)
+    })
+
+  }catch(err){
+    return res.status(500).json({
+      message: 'Error while editing product' + err,
+    });
+  }
+
+
+})
+
 
 async function upload_rollback(files:Express.Multer.File[]){
   try{
