@@ -4,16 +4,19 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import api from './src/routes/api'
 import mongoose from "mongoose";
-//For env File 
+import path from 'path'
+
 dotenv.config();
 
 const app: Application = express();
 const port = process.env.PORT || 8000;
 
-
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'uploads')));
+app.use("/images", express.static(path.join(__dirname, 'uploads')));
 
 
 mongoose
@@ -24,7 +27,6 @@ mongoose
   .catch(() => {
     console.log("error connecting to mongodb ");
   });
-
 
 app.use('/api/v1' , api)
 
