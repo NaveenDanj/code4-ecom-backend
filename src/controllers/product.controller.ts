@@ -5,7 +5,6 @@ import upload from '../services/upload.service';
 import Product from '../models/product.model';
 import fs from 'fs'
 import { IProduct } from '../types/types';
-import { ObjectId } from 'mongodb';
 
 router.post(
   '/create-product',
@@ -273,10 +272,70 @@ router.put('/edit-product-details' , async (req: Request, res: Response) => {
 
   }catch(err){
     return res.status(500).json({
-      message: 'Error while editing product' + err,
+      message: 'Error while editing product',
     });
   }
 
+
+})
+
+
+router.put('/edit-product-delete-image' , async (req: Request, res: Response) => {
+
+  // @ts-ignore
+  const id:string = req.query.id
+
+  if(!id) return res.status(400).json({
+    message : 'Please provide product id'
+  })
+
+  const validator = Joi.object({
+    filename: Joi.string().required(),
+  });
+
+  try{
+
+    let data;
+
+    try{
+      data = await validator.validateAsync(req.body, { abortEarly: false });
+    }catch(err){
+      return res.status(400).json({
+        message: 'Error while editing product',
+        error : err
+      });
+    }
+
+    const product = await Product.findOne({_id : id});
+
+    if(!product) return res.status(404).json({
+      message : 'Product not found!'
+    })
+
+    // @ts-ignore
+    if(product.images.indexOf(data.filename) == -1){
+      return res.status(404).json({
+        message : 'Image file not found!'
+      })
+    }
+
+    // @ts-ignore
+    product.images.splice( product.images.indexOf(data.filename) , 1 )
+    await product.save()
+
+    await deleteFile(data.filename)
+
+    return res.status(200).json({
+      message : 'product updated successfully!',
+      product : await Product.findById(id)
+    })
+
+
+  }catch(err){
+    return res.status(500).json({
+      message: 'Error while editing product',
+    });
+  }
 
 })
 
