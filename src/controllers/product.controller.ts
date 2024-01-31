@@ -385,8 +385,6 @@ router.post('/edit-product-upload-image' , upload.fields([{ name: 'images', maxC
 })
 
 
-
-
 async function upload_rollback(files:Express.Multer.File[]){
   try{
     const deletionPromises = files.map((filePath) => deleteFile(filePath.filename));

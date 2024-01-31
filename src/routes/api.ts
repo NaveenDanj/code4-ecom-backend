@@ -1,6 +1,8 @@
 import express from "express";
 import authController from '../controllers/auth.controller'
 import productController from '../controllers/product.controller'
+import searchController from '../controllers/search.controller'
+
 const router = express.Router();
 import userAuthRequired from '../middlewares/userAuthRequired.middleware'
 
@@ -11,5 +13,6 @@ router.get("/", (req, res) => {
 
 router.use("/auth", authController);
 router.use("/product", userAuthRequired() , productController);
+router.use("/search", userAuthRequired() , searchController);
 
 export default router;
