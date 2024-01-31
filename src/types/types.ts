@@ -4,6 +4,7 @@ export interface IUser {
     fullname:string;
     email:string;
     password:string;
+    favouriteProducts:string[];
 }
 
 export interface IAuthToken {

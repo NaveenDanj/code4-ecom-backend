@@ -13,6 +13,10 @@ const UserSchema = new Schema(
       required: false,
     },
 
+    favouriteProducts : [{
+      type: String,
+    }],
+
     password: {
       type: String,
       required: false,

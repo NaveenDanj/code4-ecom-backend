@@ -1,5 +1,4 @@
 import express, {Request, Response} from 'express';
-import Joi from 'joi';
 import Product from '../models/product.model';
 const router = express.Router();
 
@@ -24,13 +23,13 @@ router.get('/product-search' , async(req:Request , res:Response) => {
   try {
     const matchingProducts = await Product.find(searchQuery).limit(5);
 
-    res.json({
+    return res.json({
       results: matchingProducts,
     });
 
   } catch (error) {
 
-    res.status(500).json({
+    return res.status(500).json({
       message: 'Internal Server Error',
       error: error,
     });
