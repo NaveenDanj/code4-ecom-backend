@@ -14,7 +14,8 @@ const UserSchema = new Schema(
     },
 
     favouriteProducts : [{
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Product'
     }],
 
     password: {
