@@ -4,6 +4,8 @@ const router = express.Router();
 import upload from '../services/upload.service';
 import Product from '../models/product.model';
 import fs from 'fs'
+import { IProduct } from '../types/types';
+import { ObjectId } from 'mongodb';
 
 router.post(
   '/create-product',
@@ -168,7 +170,8 @@ router.get('/get-all-products' , async (req: Request, res: Response) => {
 
 router.delete('/delete-product' , async (req: Request, res: Response) => {
 
-  const id = req.query.id
+  // @ts-ignore
+  const id:string = req.query.id
 
   if(!id) return res.status(400).json({
     message : 'Please provide product id'
@@ -176,16 +179,29 @@ router.delete('/delete-product' , async (req: Request, res: Response) => {
 
   try{
 
-    const product = await Product.findOne({ _id : id })
+    const product:IProduct | null = await Product.findOne({ _id : id })
 
     if(!product) return res.status(404).json({
       message : 'Product not found!'
     })
 
+    for(let i = 0; i < product.images.length; i++){
+      try{
+        await deleteFile(product.images[i])
+      }catch(err){
+        continue
+      }
+    }
+
+    await Product.deleteMany({ _id : id })
+
+    return res.status(200).json({
+      message: 'Product deleted successfully!',
+    });
 
   }catch(err){
     return res.status(500).json({
-      message: 'Error while deleting product',
+      message: 'Error while deleting product ' + err,
     });
   }
 
@@ -204,15 +220,15 @@ async function upload_rollback(files:Express.Multer.File[]){
 }
 
 const deleteFile = (filePath: string): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      fs.unlink("uploads/"+ filePath, (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
+  return new Promise((resolve, reject) => {
+    fs.unlink("uploads/"+ filePath, (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
     });
+  });
 };
 
 export default router;

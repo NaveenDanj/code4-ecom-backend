@@ -20,17 +20,17 @@ const ProductSchema = new Schema(
     },
 
     quantity: {
-        type: Number,
-        default: 0
+      type: Number,
+      default: 0
     },
 
     images : [{
-        type: String,
+      type: String,
     }],
 
     thumbnail: {
-        type:String,
-        required : false
+      type:String,
+      required : false
     }
 
   },

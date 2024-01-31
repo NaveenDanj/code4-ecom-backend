@@ -7,8 +7,18 @@ export interface IUser {
 }
 
 export interface IAuthToken {
-    id:string;
+    _id:string;
     userId:string;
     token:string;
     createdAt:Date
+}
+
+export interface IProduct {
+    _id:string;
+    sku:string;
+    productName:string;
+    description:string;
+    quantity:number;
+    images:string[];
+    thumbnail:string;
 }
