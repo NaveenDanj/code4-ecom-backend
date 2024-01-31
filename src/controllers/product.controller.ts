@@ -101,7 +101,6 @@ router.post(
   }
 );
 
-
 router.get('/get-product' , async (req: Request, res: Response) =>{
     
   const id = req.query.id
@@ -279,7 +278,6 @@ router.put('/edit-product-details' , async (req: Request, res: Response) => {
 
 })
 
-
 router.put('/edit-product-delete-image' , async (req: Request, res: Response) => {
 
   // @ts-ignore
@@ -338,6 +336,55 @@ router.put('/edit-product-delete-image' , async (req: Request, res: Response) =>
   }
 
 })
+
+router.post('/edit-product-upload-image' , upload.fields([{ name: 'images', maxCount: 8 }]) , async (req: Request, res: Response) => {
+
+  // @ts-ignore
+  const id:string = req.query.id
+
+  if(!id) return res.status(400).json({
+    message : 'Please provide product id'
+  })
+
+  try{
+
+    const product = await Product.findOne({_id : id});
+
+    if(!product) return res.status(404).json({
+      message : 'Product not found!'
+    })
+
+    // @ts-ignore
+    if (!req.files || !req.files['images']) {
+      return res.status(400).json({
+        message: 'Please upload product images',
+      });
+    }
+    
+
+    // @ts-ignore
+    for(let i = 0; i < req.files['images'].length; i++){
+      // @ts-ignore
+      product.images.push(req.files['images'][i].filename)
+    }
+
+    await product.save()
+
+    return res.status(200).json({
+      message : 'product updated successfully!',
+      product : await Product.findById(id)
+    })
+    
+  }catch(err){
+    return res.status(500).json({
+      message: 'Error while editing product' + err,
+    });
+  }
+
+
+})
+
+
 
 
 async function upload_rollback(files:Express.Multer.File[]){
