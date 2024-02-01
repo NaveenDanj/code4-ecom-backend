@@ -61,15 +61,15 @@ router.get('/remove-from-favourite' , async (req:Request , res:Response) => {
         const user:IUser = req.user
         const product = await Product.findOne({_id : id})
 
-        if(!product) return res.status(404).json({
-            message : 'Product not found!'
-        })
+        // if(!product) return res.status(404).json({
+        //     message : 'Product not found!'
+        // })
 
-        if(user.favouriteProducts.indexOf(product._id) == -1) return res.status(400).json({
+        if(user.favouriteProducts.indexOf(id) == -1) return res.status(400).json({
             message : 'Product not in favourite list'
         })
 
-        user.favouriteProducts.splice(  user.favouriteProducts.indexOf(product._id) , 1)
+        user.favouriteProducts.splice(  user.favouriteProducts.indexOf(id) , 1)
         // @ts-ignore
         await user.save()
 

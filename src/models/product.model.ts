@@ -29,7 +29,7 @@ const ProductSchema = new Schema(
     }],
 
     thumbnail: {
-      type:String,
+      type:Number,
       required : false
     }
 

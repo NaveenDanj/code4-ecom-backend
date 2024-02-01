@@ -219,6 +219,7 @@ router.put('/edit-product-details' , async (req: Request, res: Response) => {
     productName: Joi.string().required(),
     description: Joi.string().required(),
     quantity: Joi.number().required(),
+    thumbnail: Joi.number().required(),
   });
 
 
@@ -260,7 +261,8 @@ router.put('/edit-product-details' , async (req: Request, res: Response) => {
         sku : data.sku,
         productName: data.productName,
         description: data.description,
-        quantity: data.quantity
+        quantity: data.quantity,
+        thumbnail: data.thumbnail
       }}
     )
 
